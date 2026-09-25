@@ -2,7 +2,7 @@ from flask import Blueprint, request, jsonify
 from database import mongo
 from config import JWT_SECRET
 from werkzeug.security import generate_password_hash, check_password_hash
-from datetime import datetime, timedelta,timezone
+from datetime import datetime, timedelta ,timezone
 import jwt
 
 auth_bp = Blueprint("auth", __name__)
@@ -31,6 +31,9 @@ def register():
     if len(password) < 6:
         return jsonify({"error": "Password must be at least 6 characters"}), 400
 
+    if "@" not in email:
+        return jsonify({"error": "Enter a valid email"}), 400
+
     if mongo.db.users.find_one({"email": email}):
         return jsonify({"error": "Email already registered"}), 409
 
@@ -38,6 +41,7 @@ def register():
         "name": name,
         "email": email,
         "password": generate_password_hash(password),
+        "role": "user",
         "created_at": datetime.now(timezone.utc)
     }
 
@@ -58,14 +62,15 @@ def login():
     email = data.get("email", "").strip().lower()
     password = data.get("password", "")
 
+    if not email or not password:
+        return jsonify({"error": "email and password are required"}), 400
+
     user = mongo.db.users.find_one({"email": email})
 
     if not user or not check_password_hash(user["password"], password):
         return jsonify({"error": "Invalid email or password"}), 401
 
-    token = create_token(user["_id"])
-
     return jsonify({
         "message": "Login successful",
-        "token": token
+        "token": create_token(user["_id"])
     }), 200
