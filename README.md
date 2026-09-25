@@ -24,17 +24,17 @@ Simple backend Blog API built using Flask and MongoDB.
 
 ## Project Structure
 
-app.py
-auth.py
-config.py
-database.py
-middleware.py
-create_blog.py
-blog_routes.py
-blog_actions.py
-likes.py
-comments.py
-requirements.txt
+    app.py
+    auth.py
+    config.py
+    database.py
+    middleware.py
+    create_blog.py
+    blog_routes.py
+    blog_actions.py
+    likes.py
+    comments.py
+    requirements.txt
 
 ## Setup
 
